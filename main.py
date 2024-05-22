@@ -39,10 +39,22 @@ if __name__ == "__main__":
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
+    # 断点恢复
+    flag = False
+    # 获取logs文件夹下的最近一个log文件
+    logs = os.listdir('./logs')
+    log = open('./logs/' + sorted(logs)[0], 'r', encoding='utf-8-sig').read()
+    last_code = log.split('\n')[-2].split(' ')[0]
+    print('last_code:', last_code)
+
     for code, name in zip(codes, names):
         code = str(code)
-        # 如果不足6位，前面补0
         code = code.zfill(6)
+        if code == last_code:
+            flag = True
+        if not flag:
+            print(code, name, 'skip')
+            continue
         print(code, name)
         df = get_k_history(str(code), beg = start_date, end = end_date)
         name_tra = name.replace('*', '')
